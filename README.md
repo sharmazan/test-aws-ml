@@ -20,13 +20,23 @@ MODEL_S3_PATH=models/titanic_rf.pkl
 
 ## Кроки
 
+Вкажіть ваш bucket та шляхи у `.env` файлі.
+
+Налаштуйте Amazon Lambda
+```bash
+bash deploy/deploy_lambda.sh 
+```
+
 ### 1. Повний пайплайн: завантаження датасету, тренування моделі та збереження в S3
 
-1. Вкажіть ваш bucket та шляхи у `.env` файлі.
-2. Запустіть скрипт:
+Встановіть залежності:
+```bash
+uv sync
+```
+Запустіть скрипт:
 
 ```bash
-python train_and_upload.py
+uv run train_and_upload.py
 ```
 
 Скрипт автоматично завантажить Titanic датасет, завантажить його в S3, натренує модель `RandomForestClassifier` та збереже її до S3 за шляхом `MODEL_S3_PATH`.
