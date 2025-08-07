@@ -1,51 +1,46 @@
+from __future__ import annotations
+
 import boto3
-import os
 from dotenv import load_dotenv
 
+from config import get_settings
 from download_titanic import download_titanic_csv
-from upload_to_s3 import upload_file_to_s3
+from predict import main as run_prediction
+from s3_utils import upload_file
 
 
-def invoke_lambda(lambda_name):
-    client = boto3.client('lambda')
-    response = client.invoke(
-        FunctionName=lambda_name,
-        InvocationType='RequestResponse'
-    )
-    return response['Payload'].read()
+def invoke_lambda(lambda_name: str) -> bytes:
+    client = boto3.client("lambda")
+    response = client.invoke(FunctionName=lambda_name, InvocationType="RequestResponse")
+    return response["Payload"].read()
 
 
-def download_model(bucket, model_key, local_path):
-    s3 = boto3.client('s3')
+def download_model(bucket: str, model_key: str, local_path: str) -> None:
+    s3 = boto3.client("s3")
     s3.download_file(bucket, model_key, local_path)
     print(f"Downloaded model to {local_path}")
 
 
-load_dotenv()
-bucket_name = os.environ.get("AWS_S3_BUCKET")
-default_s3_key = os.environ.get("TITANIC_DATA_KEY", "datasets/titanic.csv")
+def main() -> None:
+    load_dotenv()
+    settings = get_settings()
 
-
-def main():
     print("Hello from aws!")
     download_titanic_csv()
     print("Titanic dataset downloaded successfully.")
-    upload_file_to_s3("titanic.csv", bucket_name, "datasets/titanic.csv")
+
+    upload_file("titanic.csv", settings.aws_s3_bucket, settings.titanic_data_key)
     print("Titanic dataset uploaded to S3 successfully.")
     print("Run train_titanic.py to train the model.")
 
-    lambda_name = os.environ.get("LAMBDA_FUNCTION_NAME", "titanic-train")
-    model_key = os.environ.get("MODEL_S3_KEY", "models/titanic_rf.pkl")
-    local_model = "titanic_rf.pkl"
-
     print("Invoking Lambda for training...")
-    print(invoke_lambda(lambda_name))
+    print(invoke_lambda(settings.lambda_function_name))
 
     print("Downloading trained model...")
-    download_model(bucket_name, model_key, local_model)
+    download_model(settings.aws_s3_bucket, settings.model_s3_key, "titanic_rf.pkl")
 
     print("Running prediction...")
-    os.system(f"python predict.py titanic.csv predictions.csv")
+    run_prediction("titanic.csv", "predictions.csv")
 
 
 if __name__ == "__main__":
