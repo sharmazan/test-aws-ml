@@ -5,14 +5,13 @@ set -euo pipefail
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 
-# Load environment variables from .env file
+# Load environment variables from .env file if it exists
 if [ -f "$PROJECT_DIR/.env" ]; then
     set -a
     source "$PROJECT_DIR/.env"
     set +a
 else
-    echo "Error: .env file not found in $PROJECT_DIR"
-    exit 1
+    echo "Warning: .env file not found in $PROJECT_DIR, relying on existing environment variables"
 fi
 
 # Constants
@@ -180,7 +179,7 @@ main() {
 
     # Validate required environment variables
     if [ -z "${AWS_S3_BUCKET:-}" ]; then
-        echo "Error: AWS_S3_BUCKET is not set in .env file"
+        echo "Error: AWS_S3_BUCKET is not set"
         exit 1
     fi
 

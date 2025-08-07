@@ -34,7 +34,7 @@ aws-titanic-ml
    ```
 
 4. **Set up environment variables:**
-   Copy `.env.example` to `.env` and fill in the required values:
+   Export the required variables or copy `.env.example` to `.env` and fill in the values:
    ```
    AWS_S3_BUCKET=<your-s3-bucket>
    TITANIC_DATA_KEY=<path-to-titanic-data>
