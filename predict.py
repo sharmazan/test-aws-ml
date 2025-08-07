@@ -1,31 +1,35 @@
-import boto3
-import os
-import io
-import pickle
-import pandas as pd
+import argparse
+from botocore.exceptions import BotoCoreError, ClientError
 from dotenv import load_dotenv
+import pandas as pd
 
-def load_model_from_s3(bucket, key):
-    s3 = boto3.client('s3')
-    obj = s3.get_object(Bucket=bucket, Key=key)
-    return pickle.load(io.BytesIO(obj['Body'].read()))
+from config import get_settings
+from s3_utils import load_pickle
 
-def main(input_csv, output_csv):
+
+def main(input_csv: str, output_csv: str) -> None:
     load_dotenv()
-    bucket = os.environ.get("AWS_S3_BUCKET")
-    model_key = os.environ.get("MODEL_S3_KEY", "models/titanic_rf.pkl")
+    settings = get_settings()
 
-    model = load_model_from_s3(bucket, model_key)
+    try:
+        model = load_pickle(settings.aws_s3_bucket, settings.model_s3_key)
+    except (BotoCoreError, ClientError) as exc:
+        raise RuntimeError("Failed to load model from S3") from exc
+
     df = pd.read_csv(input_csv)
-    df['Sex'] = df['Sex'].map({'male': 0, 'female': 1})
-    X = df[['Pclass', 'Sex', 'Age']]
+    df["Sex"] = df["Sex"].map({"male": 0, "female": 1})
+    X = df[["Pclass", "Sex", "Age"]]
     preds = model.predict(X)
-    df['prediction'] = preds
+    df["prediction"] = preds
     df.to_csv(output_csv, index=False)
     print(f"Predictions saved to {output_csv}")
 
+
 if __name__ == "__main__":
-    import sys
-    input_csv = sys.argv[1] if len(sys.argv) > 1 else "titanic.csv"
-    output_csv = sys.argv[2] if len(sys.argv) > 2 else "predictions.csv"
-    main(input_csv, output_csv)
+    parser = argparse.ArgumentParser(
+        description="Run predictions using a model stored in S3"
+    )
+    parser.add_argument("input_csv", nargs="?", default="titanic.csv")
+    parser.add_argument("output_csv", nargs="?", default="predictions.csv")
+    args = parser.parse_args()
+    main(args.input_csv, args.output_csv)

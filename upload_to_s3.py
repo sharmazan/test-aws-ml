@@ -1,24 +1,22 @@
-import boto3
-import os
-import sys
+import argparse
 from dotenv import load_dotenv
 
-def upload_file_to_s3(local_path, bucket_name, s3_key):
-    s3 = boto3.client('s3')
-    s3.upload_file(local_path, bucket_name, s3_key)
-    print(f"Uploaded {local_path} to s3://{bucket_name}/{s3_key}")
+from config import get_settings
+from s3_utils import upload_file
+
+
+def main() -> None:
+    load_dotenv()
+    settings = get_settings()
+
+    parser = argparse.ArgumentParser(description="Upload a file to S3")
+    parser.add_argument("local_path", nargs="?", default="titanic.csv")
+    parser.add_argument("s3_key", nargs="?", default=settings.titanic_data_key)
+    args = parser.parse_args()
+
+    upload_file(args.local_path, settings.aws_s3_bucket, args.s3_key)
+    print(f"Uploaded {args.local_path} to s3://{settings.aws_s3_bucket}/{args.s3_key}")
+
 
 if __name__ == "__main__":
-    load_dotenv()
-    bucket_name = os.environ.get("AWS_S3_BUCKET")
-    default_s3_key = os.environ.get("TITANIC_DATA_KEY", "datasets/titanic.csv")
-
-    if not bucket_name:
-        raise ValueError("AWS_S3_BUCKET env variable is not set")
-
-    # Використання аргументів командного рядка
-    # python upload_to_s3.py [local_path] [s3_key]
-    local_path = sys.argv[1] if len(sys.argv) > 1 else "titanic.csv"
-    s3_key = sys.argv[2] if len(sys.argv) > 2 else default_s3_key
-
-    upload_file_to_s3(local_path, bucket_name, s3_key)
+    main()
