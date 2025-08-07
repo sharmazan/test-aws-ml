@@ -1,0 +1,9 @@
+titanic.csv
+__pycache__
+*.swp
+.env
+mlruns/
+output.txt
+*.zip
+deploy/layer
+deploy/.terraform*

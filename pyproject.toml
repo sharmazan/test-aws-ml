@@ -1,0 +1,13 @@
+[project]
+name = "aws"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "boto3>=1.40.4",
+    "dotenv>=0.9.9",
+    "mlflow>=3.2.0",
+    "pandas>=2.3.1",
+    "scikit-learn>=1.7.1",
+]
