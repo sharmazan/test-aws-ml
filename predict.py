@@ -17,6 +17,7 @@ def main(input_csv: str, output_csv: str) -> None:
         raise RuntimeError("Failed to load model from S3") from exc
 
     df = pd.read_csv(input_csv)
+    df = df.dropna(subset=["Pclass", "Sex", "Age"])
     df["Sex"] = df["Sex"].map({"male": 0, "female": 1})
     X = df[["Pclass", "Sex", "Age"]]
     preds = model.predict(X)
