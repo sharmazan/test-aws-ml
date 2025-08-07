@@ -16,7 +16,7 @@ def main() -> None:
     settings = get_settings()
     mlflow.set_tracking_uri(settings.mlflow_url)
 
-    df = read_csv(settings.aws_s3_bucket, settings.titanic_data_key)
+    df = read_csv(settings.aws_s3_bucket, settings.titanic_data_path)
     df = df.dropna(subset=["Survived", "Pclass", "Sex", "Age"])
     df["Sex"] = df["Sex"].map({"male": 0, "female": 1})
     X = df[["Pclass", "Sex", "Age"]]
