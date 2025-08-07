@@ -16,6 +16,7 @@
 AWS_S3_BUCKET=your-bucket-name
 TITANIC_DATA_PATH=datasets/titanic.csv
 MODEL_S3_PATH=models/titanic_rf.pkl
+LAMBDA_FUNCTION_NAME=titanic-train
 ```
 
 ## Кроки
@@ -24,7 +25,7 @@ MODEL_S3_PATH=models/titanic_rf.pkl
 
 Налаштуйте Amazon Lambda
 ```bash
-bash deploy/deploy_lambda.sh 
+bash deploy/deploy_lambda.sh
 ```
 
 ### 1. Повний пайплайн: завантаження датасету, тренування моделі та збереження в S3
@@ -52,6 +53,16 @@ mlflow server --backend-store-uri ./mlruns --default-artifact-root ./mlruns --ho
 ### 3. Перегляд результатів
 
 Всі експерименти, параметри, метрики та моделі будуть доступні через MLflow UI.
+
+### 4. Передбачення через Lambda
+
+```bash
+uv run predict_lambda.py
+```
+
+Скрипт випадково обирає пасажира з тестової вибірки Titanic, виводить його дані,
+викликає Lambda-функцію `LAMBDA_FUNCTION_NAME` і показує як передбачення, так і
+фактичний результат.
 
 ---
 
