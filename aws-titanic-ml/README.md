@@ -37,8 +37,8 @@ aws-titanic-ml
    Export the required variables or copy `.env.example` to `.env` and fill in the values:
    ```
    AWS_S3_BUCKET=<your-s3-bucket>
-   TITANIC_DATA_KEY=<path-to-titanic-data>
-   MODEL_S3_KEY=<path-to-save-model>
+   TITANIC_DATA_PATH=<path-to-titanic-data>
+   MODEL_S3_PATH=<path-to-save-model>
    ```
 
 ## Usage
@@ -54,7 +54,7 @@ docker build -t aws-titanic-ml .
 
 To run the Docker container:
 ```bash
-docker run -e AWS_S3_BUCKET=<your-s3-bucket> -e TITANIC_DATA_KEY=<path-to-titanic-data> -e MODEL_S3_KEY=<path-to-save-model> aws-titanic-ml
+docker run -e AWS_S3_BUCKET=<your-s3-bucket> -e TITANIC_DATA_PATH=<path-to-titanic-data> -e MODEL_S3_PATH=<path-to-save-model> aws-titanic-ml
 ```
 
 ## License

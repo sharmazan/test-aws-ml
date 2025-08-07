@@ -12,7 +12,7 @@ def main(input_csv: str, output_csv: str) -> None:
     settings = get_settings()
 
     try:
-        model = load_pickle(settings.aws_s3_bucket, settings.model_s3_key)
+        model = load_pickle(settings.aws_s3_bucket, settings.model_s3_path)
     except (BotoCoreError, ClientError) as exc:
         raise RuntimeError("Failed to load model from S3") from exc
 

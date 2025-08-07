@@ -9,14 +9,14 @@ variable "s3_bucket" {
   type        = string
 }
 
-variable "titanic_data_key" {
-  description = "S3 key for Titanic dataset"
+variable "titanic_data_path" {
+  description = "S3 path for Titanic dataset"
   type        = string
   default     = "datasets/titanic.csv"
 }
 
-variable "model_s3_key" {
-  description = "S3 key for trained model"
+variable "model_s3_path" {
+  description = "S3 path for trained model"
   type        = string
   default     = "models/titanic_rf.pkl"
 }

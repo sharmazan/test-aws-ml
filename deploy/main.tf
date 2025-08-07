@@ -95,10 +95,10 @@ resource "aws_lambda_function" "titanic_train" {
 
   environment {
     variables = {
-      AWS_S3_BUCKET    = var.s3_bucket
-      TITANIC_DATA_KEY = var.titanic_data_key
-      MODEL_S3_KEY     = var.model_s3_key
-      PYTHONPATH       = "/opt/python"  # Important for Lambda to find the layer modules
+      AWS_S3_BUCKET     = var.s3_bucket
+      TITANIC_DATA_PATH = var.titanic_data_path
+      MODEL_S3_PATH     = var.model_s3_path
+      PYTHONPATH        = "/opt/python"  # Important for Lambda to find the layer modules
     }
   }
 

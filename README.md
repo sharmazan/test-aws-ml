@@ -14,30 +14,24 @@
 
 ```
 AWS_S3_BUCKET=your-bucket-name
-TITANIC_DATA_KEY=datasets/titanic.csv
+TITANIC_DATA_PATH=datasets/titanic.csv
+MODEL_S3_PATH=models/titanic_rf.pkl
 ```
 
 ## Кроки
 
-### 1. Завантаження датасету в S3
+### 1. Повний пайплайн: завантаження датасету, тренування моделі та збереження в S3
 
-1. Змініть назву bucket у скрипті на ваш власний.
-2. Запустіть скрипт для завантаження датасету (створіть окремий скрипт або використайте AWS CLI):
-
-```bash
-aws s3 cp titanic.csv s3://<your-bucket-name>/datasets/titanic.csv
-```
-
-### 2. Тренування моделі та логування експерименту
-
-1. Вкажіть ваш bucket та ключ через змінні середовища (наприклад у `.env` файлі).
+1. Вкажіть ваш bucket та шляхи у `.env` файлі.
 2. Запустіть скрипт:
 
 ```bash
-python train_titanic.py
+python train_and_upload.py
 ```
 
-### 3. Запуск локального MLflow сервера
+Скрипт автоматично завантажить Titanic датасет, завантажить його в S3, натренує модель `RandomForestClassifier` та збереже її до S3 за шляхом `MODEL_S3_PATH`.
+
+### 2. Запуск локального MLflow сервера (опціонально)
 
 ```bash
 mlflow server --backend-store-uri ./mlruns --default-artifact-root ./mlruns --host 0.0.0.0 --port 5000
@@ -45,7 +39,7 @@ mlflow server --backend-store-uri ./mlruns --default-artifact-root ./mlruns --ho
 
 Інтерфейс MLflow буде доступний на [http://localhost:5000](http://localhost:5000).
 
-### 4. Перегляд результатів
+### 3. Перегляд результатів
 
 Всі експерименти, параметри, метрики та моделі будуть доступні через MLflow UI.
 
